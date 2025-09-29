@@ -3,7 +3,6 @@ package br.com.ntt.bank.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
@@ -11,7 +10,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +29,10 @@ public class User implements Serializable {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
+
+    public Long getId() {
+        return id;
+    }
 
     public BigDecimal getBalance() {
         return balance;

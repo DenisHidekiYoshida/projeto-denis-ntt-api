@@ -29,25 +29,29 @@ public class TransactionCommandService {
     @Transactional
     public void deposit(Long userId, BigDecimal amount) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        BigDecimal current = user.getBalance();
-        if (current.compareTo(BigDecimal.ZERO) < 0) {
-            BigDecimal negative = current.abs();
-            BigDecimal debtWithFee = negative.multiply(new BigDecimal("1.02")).setScale(2, RoundingMode.HALF_UP);
-            if (amount.compareTo(debtWithFee) >= 0) {
-                BigDecimal remaining = amount.subtract(debtWithFee).setScale(2, RoundingMode.HALF_UP);
-                user.setBalance(remaining);
+
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+        if (user.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+            BigDecimal debt = user.getBalance().abs();
+            BigDecimal debtWithInterest = debt.multiply(BigDecimal.valueOf(1.02))
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            if (amount.compareTo(debtWithInterest) >= 0) {
+                user.setBalance(amount.subtract(debtWithInterest));
             } else {
-                user.setBalance(current.add(amount).setScale(2, RoundingMode.HALF_UP));
+                user.setBalance(amount.subtract(debtWithInterest));
             }
         } else {
-            user.setBalance(current.add(amount).setScale(2, RoundingMode.HALF_UP));
+            user.setBalance(user.getBalance().add(amount));
         }
+
         userRepository.save(user);
 
         Transaction t = new Transaction();
         t.setUser(user);
         t.setType(TransactionType.DEPOSIT);
-        t.setAmount(amount.setScale(2, RoundingMode.HALF_UP));
+        t.setAmount(amount);
         t.setCreatedAt(LocalDateTime.now());
         transactionRepository.save(t);
 
@@ -55,15 +59,43 @@ public class TransactionCommandService {
     }
 
     @Transactional
-    public void pay(Long userId, BigDecimal amount) {
+    public void withdraw(Long userId, BigDecimal amount) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+        if (user.getBalance().compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Saldo insuficiente para saque");
+        }
+
+        user.setBalance(user.getBalance().subtract(amount));
+        userRepository.save(user);
+
+        Transaction t = new Transaction();
+        t.setUser(user);
+        t.setType(TransactionType.WITHDRAW);
+        t.setAmount(amount);
+        t.setCreatedAt(LocalDateTime.now());
+        transactionRepository.save(t);
+
+        accountQueryService.evictCacheForUser(userId);
+    }
+
+    @Transactional
+    public void payBill(Long userId, BigDecimal amount, String description) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        user.setBalance(user.getBalance().subtract(amount).setScale(2, RoundingMode.HALF_UP));
+
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+        user.setBalance(user.getBalance().subtract(amount));
         userRepository.save(user);
 
         Transaction t = new Transaction();
         t.setUser(user);
         t.setType(TransactionType.PAYMENT);
-        t.setAmount(amount.setScale(2, RoundingMode.HALF_UP));
+        t.setAmount(amount);
+        t.setDescription(description);
         t.setCreatedAt(LocalDateTime.now());
         transactionRepository.save(t);
 

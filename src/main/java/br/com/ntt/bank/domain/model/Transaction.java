@@ -19,20 +19,18 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
 
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-
     @Column(precision = 19, scale = 2)
     private BigDecimal amount;
 
-
     private LocalDateTime createdAt;
+
+    private String description;
 
     public void setUser(User user) {
         this.user = user;
@@ -60,5 +58,13 @@ public class Transaction {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
