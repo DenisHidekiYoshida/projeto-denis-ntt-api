@@ -9,6 +9,7 @@ Projeto bancário com serviços API rest: CQRS, H2 (in-memory) para write model,
 ## Como rodar
 1. `mvn clean package`
 2. `mvn spring-boot:run`
+3. http://localhost:8080/swagger-ui/index.html
 
 API endpoints:
 - POST /api/auth/register {fullName, cpf, login, password}
