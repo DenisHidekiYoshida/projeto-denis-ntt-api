@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  redis:
+    host: localhost
+    port: 6379
+
+jwt:
+  secret: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc1OTE0NjMxNiwiaWF0IjoxNzU5MTQ2MzE2fQ.W5MjG47IJYVq1rJe-l7hQ2YDKLY-OFzB54trkRLNvhg
+  expiration-ms: 3600000 # 1h
+
+logging:
+  level:
+    root: INFO
