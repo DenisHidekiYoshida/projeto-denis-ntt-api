@@ -1,49 +1,48 @@
 package br.com.ntt.bank.configs;
 
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
 
-    private final Key key;
-    private final long expirationMs;
+    @Value("${jwt.secret}")
+    private String secret;
 
-    public JwtUtils(@Value("${jwt.secret}") String secret,
-                    @Value("${jwt.expiration-ms}") long expirationMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.expirationMs = expirationMs;
-    }
+    @Value("${jwt.expiration-ms}")
+    private long expirationMs;
 
+    // Gera token para o usuário
     public String generateToken(String username) {
-        Date now = new Date();
-        Date exp = new Date(now.getTime() + expirationMs);
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(exp)
-                .signWith(key)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
-    public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().getSubject();
-    }
-
+    // Valida token
     public boolean validate(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
-        } catch (JwtException ex) {
+        } catch (Exception e) {
             return false;
         }
     }
-}
 
+    // Extrai username do token
+    public String getUsername(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+}

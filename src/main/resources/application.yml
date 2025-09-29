@@ -32,9 +32,9 @@ spring:
     port: 6379
 
 jwt:
-  secret: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc1OTE0NjMxNiwiaWF0IjoxNzU5MTQ2MzE2fQ.W5MjG47IJYVq1rJe-l7hQ2YDKLY-OFzB54trkRLNvhg
+  secret: s3guraChaveSuperLongaParaJWTComMaisDe32Caracteres123!
   expiration-ms: 3600000 # 1h
 
 logging:
   level:
-    root: INFO
+    root: DEBUG
