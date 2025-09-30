@@ -6,6 +6,7 @@ import br.com.ntt.bank.domain.model.User;
 import br.com.ntt.bank.domain.repository.TransactionRepository;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.services.query.AccountQueryService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,18 +16,13 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class TransactionCommandService {
 
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final AccountQueryService accountQueryService;
-
-    public TransactionCommandService(UserRepository userRepository, TransactionRepository transactionRepository, AccountQueryService accountQueryService) {
-        this.userRepository = userRepository;
-        this.transactionRepository = transactionRepository;
-        this.accountQueryService = accountQueryService;
-    }
 
     @Transactional
     public void deposit(Long userId, BigDecimal amount) {

@@ -17,7 +17,6 @@ public class JwtUtils {
     @Value("${jwt.expiration-ms}")
     private long expirationMs;
 
-    // Gera token para o usuário
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -27,7 +26,6 @@ public class JwtUtils {
                 .compact();
     }
 
-    // Valida token
     public boolean validate(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
@@ -37,7 +35,6 @@ public class JwtUtils {
         }
     }
 
-    // Extrai username do token
     public String getUsername(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secret)

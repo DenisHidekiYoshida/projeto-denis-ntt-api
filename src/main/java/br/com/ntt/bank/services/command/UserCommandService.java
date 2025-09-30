@@ -4,20 +4,17 @@ import br.com.ntt.bank.domain.dto.RegisterDto;
 import br.com.ntt.bank.domain.model.User;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.util.CpfValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 @Service
 public class UserCommandService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserCommandService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public User register(RegisterDto dto) {

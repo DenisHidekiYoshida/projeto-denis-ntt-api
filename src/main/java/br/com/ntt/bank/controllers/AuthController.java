@@ -8,9 +8,9 @@ import br.com.ntt.bank.domain.requests.AuthRequest;
 import br.com.ntt.bank.domain.responses.AuthResponse;
 import br.com.ntt.bank.services.command.UserCommandService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -23,22 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @SecurityRequirement(name = "bearerAuth")
 @Slf4j
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserCommandService userCommandService;
-    private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthController(UserCommandService userCommandService, AuthenticationManager authenticationManager, JwtUtils jwtUtils,
-                          UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userCommandService = userCommandService;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Validated @RequestBody RegisterDto dto) {

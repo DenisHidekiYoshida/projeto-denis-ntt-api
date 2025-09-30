@@ -6,6 +6,7 @@ import br.com.ntt.bank.domain.model.User;
 import br.com.ntt.bank.domain.repository.TransactionRepository;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.domain.responses.BalanceResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class AccountQueryService {
 
@@ -26,12 +28,6 @@ public class AccountQueryService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private final DateFormat fmt = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-    public AccountQueryService(UserRepository userRepository, TransactionRepository transactionRepository, RedisTemplate<String, Object> redisTemplate) {
-        this.userRepository = userRepository;
-        this.transactionRepository = transactionRepository;
-        this.redisTemplate = redisTemplate;
-    }
 
     public BalanceResponse getBalanceAndHistory(Long userId) {
         String key = cacheKey(userId);

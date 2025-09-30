@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,17 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/account")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class AccountController {
 
     private final TransactionCommandService transactionCommandService;
     private final AccountQueryService accountQueryService;
     private final UserRepository userRepository;
-
-    public AccountController(TransactionCommandService transactionCommandService, AccountQueryService accountQueryService, UserRepository userRepository) {
-        this.transactionCommandService = transactionCommandService;
-        this.accountQueryService = accountQueryService;
-        this.userRepository = userRepository;
-    }
 
     private Long resolveUserId(UserDetails userDetails) {
         return userRepository.findByLogin(userDetails.getUsername()).orElseThrow().getId();

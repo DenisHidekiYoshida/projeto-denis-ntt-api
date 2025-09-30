@@ -1,6 +1,7 @@
 package br.com.ntt.bank.configs;
 
 import br.com.ntt.bank.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,15 +28,11 @@ import java.io.IOException;
 
 @Configuration
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
-
-    public SecurityConfig(JwtUtils jwtUtils, UserRepository userRepository) {
-        this.jwtUtils = jwtUtils;
-        this.userRepository = userRepository;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
