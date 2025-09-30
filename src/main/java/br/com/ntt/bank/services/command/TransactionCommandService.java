@@ -6,6 +6,7 @@ import br.com.ntt.bank.domain.model.User;
 import br.com.ntt.bank.domain.repository.TransactionRepository;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.services.query.AccountQueryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 public class TransactionCommandService {
 
@@ -55,6 +57,8 @@ public class TransactionCommandService {
         t.setCreatedAt(LocalDateTime.now());
         transactionRepository.save(t);
 
+        log.info("Deposit: {}", t);
+
         accountQueryService.evictCacheForUser(userId);
     }
 
@@ -74,6 +78,8 @@ public class TransactionCommandService {
         t.setDescription(description);
         t.setCreatedAt(LocalDateTime.now());
         transactionRepository.save(t);
+
+        log.info("Payment: {}", t);
 
         accountQueryService.evictCacheForUser(userId);
     }

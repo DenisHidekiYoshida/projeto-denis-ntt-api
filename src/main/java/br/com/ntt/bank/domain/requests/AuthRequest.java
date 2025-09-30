@@ -1,6 +1,5 @@
 package br.com.ntt.bank.domain.requests;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

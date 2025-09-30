@@ -3,6 +3,7 @@ package br.com.ntt.bank.controllers;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.domain.requests.DepositRequest;
 import br.com.ntt.bank.domain.requests.PaymentRequest;
+import br.com.ntt.bank.domain.responses.BalanceResponse;
 import br.com.ntt.bank.services.command.TransactionCommandService;
 import br.com.ntt.bank.services.query.AccountQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +54,7 @@ public class AccountController {
     @PostMapping("/payment")
     @Operation(summary = "Pagar uma conta (saldo pode ficar negativo)")
     @ApiResponse(responseCode = "200", description = "Pagamento realizado com sucesso")
-    @ApiResponse(responseCode = "400", description = "Erro de validação ou regra de negocio",
+    @ApiResponse(responseCode = "400", description = "Erro de validacao ou regra de negocio",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public ResponseEntity<String> payment(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -62,6 +63,16 @@ public class AccountController {
         Long userId = resolveUserId(userDetails);
         transactionCommandService.payBill(userId, request.getAmount(), request.getDescription());
         return ResponseEntity.ok("Pagamento realizado com sucesso");
+    }
+
+    @GetMapping("/balance")
+    @Operation(summary = "Consultar historico de uma conta")
+    @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso")
+    @ApiResponse(responseCode = "400", description = "Erro de validacao ou regra de negocio",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public BalanceResponse balance(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = resolveUserId(userDetails);
+        return accountQueryService.getBalanceAndHistory(userId);
     }
 
 }

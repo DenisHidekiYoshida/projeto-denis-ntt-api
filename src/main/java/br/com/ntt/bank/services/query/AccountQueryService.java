@@ -6,6 +6,7 @@ import br.com.ntt.bank.domain.model.User;
 import br.com.ntt.bank.domain.repository.TransactionRepository;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.domain.responses.BalanceResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class AccountQueryService {
 
@@ -48,6 +50,7 @@ public class AccountQueryService {
             return d;
         }).collect(Collectors.toList());
         out.setHistorico(hist);
+        log.info("Historico Balanco: " + out);
 
         redisTemplate.opsForValue().set(key, out, 60, TimeUnit.SECONDS);
         return out;
