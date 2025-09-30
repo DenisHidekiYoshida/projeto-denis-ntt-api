@@ -3,7 +3,6 @@ package br.com.ntt.bank.controllers;
 import br.com.ntt.bank.domain.repository.UserRepository;
 import br.com.ntt.bank.domain.requests.DepositRequest;
 import br.com.ntt.bank.domain.requests.PaymentRequest;
-import br.com.ntt.bank.domain.requests.WithdrawRequest;
 import br.com.ntt.bank.services.command.TransactionCommandService;
 import br.com.ntt.bank.services.query.AccountQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,20 +48,6 @@ public class AccountController {
         Long userId = resolveUserId(userDetails);
         transactionCommandService.deposit(userId, request.getAmount());
         return ResponseEntity.ok("Deposito realizado com sucesso");
-    }
-
-    @PostMapping("/withdraw")
-    @Operation(summary = "Sacar dinheiro da conta")
-    @ApiResponse(responseCode = "200", description = "Saque realizado com sucesso")
-    @ApiResponse(responseCode = "400", description = "Erro de validacao ou regra de negocio",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    public ResponseEntity<String> withdraw(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @Validated @RequestBody WithdrawRequest request) {
-
-        Long userId = resolveUserId(userDetails);
-        transactionCommandService.withdraw(userId, request.getAmount());
-        return ResponseEntity.ok("Saque realizado com sucesso");
     }
 
     @PostMapping("/payment")

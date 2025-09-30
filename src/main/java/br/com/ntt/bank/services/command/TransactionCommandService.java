@@ -59,30 +59,6 @@ public class TransactionCommandService {
     }
 
     @Transactional
-    public void withdraw(Long userId, BigDecimal amount) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        amount = amount.setScale(2, RoundingMode.HALF_UP);
-
-        if (user.getBalance().compareTo(amount) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente para saque");
-        }
-
-        user.setBalance(user.getBalance().subtract(amount));
-        userRepository.save(user);
-
-        Transaction t = new Transaction();
-        t.setUser(user);
-        t.setType(TransactionType.WITHDRAW);
-        t.setAmount(amount);
-        t.setCreatedAt(LocalDateTime.now());
-        transactionRepository.save(t);
-
-        accountQueryService.evictCacheForUser(userId);
-    }
-
-    @Transactional
     public void payBill(Long userId, BigDecimal amount, String description) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 

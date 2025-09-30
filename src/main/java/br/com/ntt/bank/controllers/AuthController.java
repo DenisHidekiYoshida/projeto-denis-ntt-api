@@ -8,9 +8,9 @@ import br.com.ntt.bank.domain.requests.AuthRequest;
 import br.com.ntt.bank.domain.responses.AuthResponse;
 import br.com.ntt.bank.services.command.UserCommandService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -53,17 +54,18 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody AuthRequest req) {
         String login = req.getLogin();
         String password = req.getPassword();
-        try {
-            User user = userRepository.findByLogin(login)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        var mensagemErro = "Credencial invalida, usuario ou senha incorretos";
 
-            if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-                throw new RuntimeException("Invalid password");
+        try {
+            User user = userRepository.findByLogin(login).orElse(null);
+
+            if ((user == null || !passwordEncoder.matches(password, user.getPasswordHash()))) {
+                return ResponseEntity.status(401).body(mensagemErro);
             }
             String token = jwtUtils.generateToken(req.getLogin());
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(401).body("Credencial invalida, usuario ou senha incorretos");
+            return ResponseEntity.status(401).body(mensagemErro);
         }
     }
 }

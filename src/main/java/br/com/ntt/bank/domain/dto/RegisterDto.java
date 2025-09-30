@@ -17,21 +17,5 @@ public class RegisterDto {
 
     @NotBlank(message = "Senha e obrigatoria")
     private String password;
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }
 
